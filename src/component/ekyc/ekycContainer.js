@@ -1,16 +1,20 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import { hypervergeauth, getTokenMobile } from "../../service/RekonitoApiService"
 import { isValidateFrontId, isValidateBackId, isValidateFaceId, isValidateFaceMatch } from "./rule/ekycRule";
 import md5 from "md5";
 import ResultBox from "./subComponent/ResultBox";
+import { Loading } from "../../shared/packages/control/loading/loading";
 
 const EkycContainer = (props) => {
     const [loadScript, setLoadScript] = useState(false);
     const [stepEkyc, setStepEkyc] = useState(0);
+    const [loading, setLoading] = useState(false);
     var attemptsCountConfig = 10000;
     const [resultCheck, setResultCheck] = useState({
         isSuccess: null,
         dataToken: null,
+        errorMsg: null,
         data: {
             front: null,
             back: null,
@@ -22,6 +26,7 @@ const EkycContainer = (props) => {
     useEffect(() => {
         const tokenParam = new URLSearchParams(window.location.search)?.get('token');
         if (tokenParam) {
+            setLoading(true);
             getTokenMobile(tokenParam).then((res) => {
                 resultCheck.dataToken = res?.data?.data ?? null;
                 setResultCheck({ ...resultCheck });
@@ -31,14 +36,18 @@ const EkycContainer = (props) => {
                 document.body.appendChild(script);
                 setTimeout(() => {
                     setLoadScript(true);
-                }, 500);
-            })
 
-            return () => {
-                document.body.removeChild(script);
-                window?.stream?.getTracks()?.forEach((track) => track?.stop());
-                window.HyperSnapSDK.endUserSession();
-            }
+                }, 0);
+                setLoading(false)
+
+                return () => {
+                    document.body.removeChild(script);
+                    window?.stream?.getTracks()?.forEach((track) => track?.stop());
+                    window.HyperSnapSDK.endUserSession();
+                }
+            }).catch(() => {
+                setLoading(false)
+            })
         }
     }, [])
 
@@ -55,7 +64,6 @@ const EkycContainer = (props) => {
     function initHV(token) {
         window.HyperSnapSDK.init(
             token,
-            // eslint-disable-line
             HyperSnapParams?.Region?.AsiaPacific
         );
         window.HyperSnapSDK.startUserSession();
@@ -75,6 +83,7 @@ const EkycContainer = (props) => {
 
     function errorDisplay(errCode, errMsg) {
         resultCheck.isSuccess = false;
+        resultCheck.errorMsg = errMsg;
         setResultCheck({ ...resultCheck })
     }
 
@@ -349,16 +358,19 @@ const EkycContainer = (props) => {
         );
     }
 
-
     return (
-        <div className="max-w-md mx-auto flex p-6 bg-gray-100 mt-10 rounded-lg shadow-xl">
+        <>
+            {
+                loading &&
+                <Loading />
+            }
             {
                 resultCheck.isSuccess !== null &&
                 <ResultBox {...props} func={{
                     retry: functionBaseStep(stepEkyc)
                 }} resultCheck={resultCheck} />
             }
-        </div>
+        </>
     )
 }
 

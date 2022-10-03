@@ -1,5 +1,7 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react'
 import { reg_face } from "../../../service/RekonitoApiService"
+import { Loading } from '../../../shared/packages/control/loading/loading';
 
 export function dataUrlToFile(dataUrl, filename) {
     const arr = dataUrl.split(',');
@@ -11,14 +13,9 @@ export function dataUrlToFile(dataUrl, filename) {
     return new File([buff], filename, { type: mime });
 }
 
-
 const ResultBox = (props) => {
     const { func, resultCheck } = props;
-    const [listImage, setListImage] = useState([]);
-    const [approvedBT, setApprovedBT] = useState({
-        data: null,
-        show: false
-    });
+    const [loading, setLoading] = useState(false);
     const [modelData, setModelData] = useState({
         fullName: null,
         doB: null,
@@ -50,6 +47,7 @@ const ResultBox = (props) => {
             && resultCheck?.data?.face
             && resultCheck?.data?.facematch
         ) {
+            setLoading(true);
             modelData.fullName = resultCheck?.data?.front?.response?.result?.details[0]?.fieldsExtracted?.name ?? null;
             modelData.doB = resultCheck?.data?.front?.response?.result?.details[0]?.fieldsExtracted?.dob ?? null;
             modelData.cccd_number = resultCheck?.data?.front?.response?.result?.details[0]?.fieldsExtracted?.idNumber ?? null;
@@ -80,22 +78,60 @@ const ResultBox = (props) => {
             setModelData({ ...modelData });
 
             insertMetaDataWhenNotMatch(null).then((res) => {
-                console.log({ res });
-                alert('Thanhf cong')
+                setLoading(false);
+            }).catch(() => {
+                setLoading(false);
             });
         }
     }, [resultCheck])
 
 
     return (
-        resultCheck?.isSuccess ||
-        <>
-            <button onClick={() => {
-                func.retry();
-            }} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Thử lại
-            </button>
-        </>
+        resultCheck?.isSuccess ?
+            <>
+                {
+                    loading ?
+                        <>
+                            <Loading />
+                        </>
+                        :
+                        <div class="grid h-screen place-items-center">
+                            <div class="p-6 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+                                <svg class="mb-2 w-10 h-10 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clip-rule="evenodd"></path><path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z"></path></svg>
+                                <a href="#">
+                                    <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Đăng ký eKYC thành công</h5>
+                                </a>
+                                <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">
+                                    Vui lòng tải lại trang đăng nhập từ web360
+                                </p>
+                            </div>
+                        </div>
+                }
+            </>
+            :
+            <div class="grid h-screen place-items-center">
+                {
+
+                    <div class="max-w-sm rounded overflow-hidden shadow-lg">
+                        <div class="px-6 py-4">
+                            <div class="font-bold text-xl mb-2">Có lỗi xảy ra</div>
+                            <p class="text-gray-700 text-base">
+                                {resultCheck?.errorMsg}
+                            </p>
+                        </div>
+                        <div class="px-6 pt-4 pb-2 items-center">
+                            <div class="p-2 flex flex-col justify-center">
+                                <button onClick={() => {
+                                    func.retry();
+                                }} class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                    Thử lại
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div >
     )
 }
 export default ResultBox;

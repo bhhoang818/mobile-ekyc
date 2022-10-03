@@ -1,3 +1,4 @@
+/* eslint-disable */
 const typeOfFrontDocPapersAllowed = [
     "cmnd_old_front",
     "cmnd_new_front",
@@ -21,9 +22,9 @@ const whiteListAcction = ["pass", "manualReview"];
 
 const concatErrorMsg = (data) => {
     let errorMerge = "";
-    // data?.map((x) => {
-    //     errorMerge += x?.message + ", "
-    // })
+    data?.map((x) => {
+        errorMerge += x?.message + ", "
+    })
     return errorMerge;
 }
 
