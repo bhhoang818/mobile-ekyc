@@ -1,0 +1,195 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* for doc instruction screen */
+.hv-center-element {
+  font-family: "Be Vietnam Pro", sans-serif !important;
+}
+.hv-center-element .hv-instructions {
+  line-height: 3;
+}
+#hv-doc-instruction-screen {
+  width: 420px;
+  height: 477px;
+  padding: 24px;
+}
+#hv-doc-instruction-screen .hv-close-button {
+  float: right;
+}
+#hv-doc-instruction-screen .hv-title {
+  text-align: left;
+  font-weight: 600;
+  font-size: 20px;
+}
+#hv-doc-instruction-screen .hv-instruction-div [class|="hv-instruction-small-div"] {
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  height: initial;
+  margin-bottom: 26px;
+}
+#hv-doc-instruction-screen .hv-proceed-btn {
+  background-color: #ffc20e;
+  width: 372px;
+  max-width: initial;
+  height: 48px;
+  border-radius: 40px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+}
+#hv-doc-instruction-screen .hv-instruction-div {
+  height: 80%;
+  margin-top: 28px;
+}
+#hv-doc-instruction-screen .hv-instruction-div .hv-instruction-small-div-right {
+  display: flex;
+  flex-direction: row-reverse;
+  height: initial;
+  justify-content: flex-end;
+}
+#hv-doc-instruction-screen .hv-instruction-div img[class|="hv-instruction-img"] {
+  width: 100px;
+  height: 70px;
+}
+#hv-doc-instruction-screen .hv-instruction-div .hv-instruction-tick {
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  left: 85px;
+  top: 55px;
+}
+.hv-instruction-div .hv-instruction-doc-text {
+  margin-left: 28px;
+  font-weight: 600;
+  font-size: 16px;
+}
+/* to customize capture screen */
+#hv-doc-capture-screen {
+  padding: 24px;
+  height: 578px;
+}
+#hv-doc-capture-screen .hv-close-button {
+  float: right;
+}
+#hv-doc-capture-screen .hv-title {
+  font-weight: 600;
+  font-size: 20px;
+}
+#hv-doc-capture-screen .hv-instructions {
+  display: block;
+  line-height: 3;
+}
+#hv-doc-capture-screen .hv-bottom-instructions {
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 24px;
+}
+/* face capture instructions page styles */
+/* TODO : design will change, 1. button 2. image size 3. margins */
+#hv-face-instruction-screen {
+  width: 420px;
+  height: 477px;
+  padding: 24px;
+}
+#hv-face-instruction-screen .hv-close-button {
+  float: right;
+}
+#hv-face-instruction-screen .hv-title {
+  text-align: left;
+  font-weight: 600;
+  font-size: 20px;
+}
+#hv-face-instruction-screen .hv-instruction-small-div-face-text {
+  display: none;
+}
+#hv-face-instruction-screen .hv-instruction-selfie img {
+  width: 237px;
+  height: 173px;
+}
+#hv-face-instruction-screen .hv-instruction-div .hv-instruction-props {
+  margin-top: 42px;
+}
+/* face capture page styles */
+#hv-face-capture-screen {
+  padding: 24px;
+  width: 500px;
+  height: 578px;
+}
+#hv-face-capture-screen .hv-close-button {
+  float: right;
+}
+#hv-face-capture-screen .hv-title {
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 32px;
+}
+#hv-face-capture-screen .hv-instructions {
+  display: none;
+}
+#hv-face-capture-screen .hv-bottom-instructions {
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 24px;
+}
+.hypervergebtn {
+  height: 6vh !important;
+}
+.hv-modal-content {
+  max-height: 600px !important;
+}
+.hv-use-this-photo-btn {
+  background-color: #ffc20e !important;
+}
+#hv-cameraholder video {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  /* Safari and Chrome */
+  -moz-transform: rotateY(180deg);
+  /* Firefox */
+}
+@media only screen and (max-width: 600px) {
+  #hv-cameraholder video {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    /* Safari and Chrome */
+    -moz-transform: rotateY(180deg);
+    /* Firefox */
+  }
+}

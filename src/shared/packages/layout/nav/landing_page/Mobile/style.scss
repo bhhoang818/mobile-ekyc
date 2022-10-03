@@ -1,0 +1,150 @@
+.mobile-popup {
+    padding: 24px 13px;
+    background: radial-gradient(98.93% 327.66% at 3.33% -11.36%, #ffd149 0%, #e12129 63.68%, #cb1728 100%), #f8f8f8;
+    backdrop-filter: blur(62px);
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 64px;
+    transition: margin-top 0.25s ease-in-out;
+    z-index: 1010;
+    @media screen and (max-width: 360px) {
+        padding: 8px;
+    }
+
+    @media screen and (max-width: 330px) {
+        padding: 3px;
+    }
+    @media screen and (min-width: 769px) {
+        display: none;
+    }
+    .icon-close {
+        height: 20px;
+        width: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        color: #dddddd;
+        font-size: 20px;
+        position: relative;
+        right: 5px;
+    }
+    &.hide {
+        margin-top: -115px;
+    }
+
+    &__hamburger-button {
+        margin-right: 10px;
+
+        @media screen and (max-width: 360px) {
+            margin-right: 5px;
+        }
+    }
+
+    &__logo {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        margin-right: 10px;
+        border-radius: 8px;
+        @media screen and (max-width: 360px) {
+            margin-right: 5px;
+        }
+    }
+
+    &__content {
+        color: #ffffff;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        &__title {
+            font-size: 12px;
+            margin-bottom: 0;
+            @media screen and (max-width: 360px) {
+                line-height: 0.6;
+            }
+        }
+
+        &__detail {
+            display: flex;
+
+            &__text {
+                font-size: 10px;
+                line-height: 19px;
+                margin-right: auto;
+
+                @media screen and (max-width: 330px) {
+                    padding: 3px;
+                    line-height: 18px;
+                }
+
+                span {
+                    display: block;
+                }
+            }
+
+            &__download {
+                width: 90px;
+                // min-width: 87px;
+                min-width: max-content;
+                line-height: 1.39;
+                font-size: 12px;
+                text-align: center;
+                text-transform: unset;
+                color: #000 !important;
+                padding: 0 24px;
+                background: #ffffff;
+                border-radius: 50px;
+                display: flex;
+                flex-direction: row;
+                font-weight: 700;
+                justify-content: center;
+                align-items: center;
+
+                @media screen and (max-width: 460px) {
+                    padding: 15px 10px;
+                }
+                @media screen and (max-width: 360px) {
+                    padding: 10px 5px;
+                }
+
+                .expand-button {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    min-width: max-content;
+
+                    &__icon {
+                        height: 15px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.mobile-popup__content__detail__download {
+    width: 90px;
+    margin-top: -5px;
+    margin-bottom: 10px;
+    min-width: max-content;
+    font-weight: 700;
+    font-size: 12px;
+    text-align: center;
+    text-transform: unset;
+    color: #000 !important;
+    padding: 0 24px;
+    background: #ffffff;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.expand-button-white,
+.expand-button-yellow,
+.mobile-popup__content__detail__download {
+    border: none;
+    color: #333 !important;
+}
