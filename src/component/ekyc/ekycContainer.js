@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { hypervergeauth } from "../../service/RekonitoApiService"
+import { hypervergeauth, getTokenMobile } from "../../service/RekonitoApiService"
 import { isValidateFrontId, isValidateBackId, isValidateFaceId, isValidateFaceMatch } from "./rule/ekycRule";
 import md5 from "md5";
 import ResultBox from "./subComponent/ResultBox";
@@ -10,6 +10,7 @@ const EkycContainer = (props) => {
     var attemptsCountConfig = 10000;
     const [resultCheck, setResultCheck] = useState({
         isSuccess: null,
+        dataToken: null,
         data: {
             front: null,
             back: null,
@@ -21,13 +22,18 @@ const EkycContainer = (props) => {
     useEffect(() => {
         const tokenParam = new URLSearchParams(window.location.search)?.get('token');
         if (tokenParam) {
-            const script = document.createElement('script');
-            script.src = "/js/ekyc_trieu.js";
-            script.async = true;
-            document.body.appendChild(script);
-            setTimeout(() => {
-                setLoadScript(true);
-            }, 500);
+            getTokenMobile(tokenParam).then((res) => {
+                resultCheck.dataToken = res?.data?.data ?? null;
+                setResultCheck({ ...resultCheck });
+                const script = document.createElement('script');
+                script.src = "/js/ekyc_trieu.js";
+                script.async = true;
+                document.body.appendChild(script);
+                setTimeout(() => {
+                    setLoadScript(true);
+                }, 500);
+            })
+
             return () => {
                 document.body.removeChild(script);
                 window?.stream?.getTracks()?.forEach((track) => track?.stop());

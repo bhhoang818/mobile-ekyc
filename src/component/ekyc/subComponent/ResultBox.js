@@ -32,7 +32,8 @@ const ResultBox = (props) => {
     })
 
     const insertMetaDataWhenNotMatch = (id = null) => {
-        modelData.id_yc_w360 = id;
+        const getId_yc = resultCheck?.dataToken?.dataExtra && JSON.parse(resultCheck?.dataToken?.dataExtra)?.id_yc_w360;
+        modelData.id_yc_w360 = getId_yc ?? null;
         const blobs = dataUrlToFile(modelData.listImage[0]?.src, `test_${new Date().toLocaleDateString()}.png`);
         const formData = new FormData(); //formdata object
         formData.append('Code', 'hd018629'); //append the values with key, value pair

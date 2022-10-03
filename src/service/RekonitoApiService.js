@@ -7,3 +7,7 @@ export const hypervergeauth = () => {
 export const reg_face = (data) => {
     return request('POST', `/MetaData/push-image-s3`, 'vi', data, { headers: { 'content-type': 'multipart/form-data' } });
 }
+
+export const getTokenMobile = (token) => {
+    return request('GET', `/MetaData/getbytokenMobile?token=${token}`);
+}
