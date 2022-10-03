@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import logo from "../../logo.svg";
 import { hypervergeauth } from "../../service/RekonitoApiService"
-import { isValidateFrontId } from "./rule/ekycRule";
+import { isValidateFrontId, isValidateBackId, isValidateFaceId, isValidateFaceMatch } from "./rule/ekycRule";
 import md5 from "md5";
+import ResultBox from "./subComponent/ResultBox";
 
 const EkycContainer = (props) => {
     const [loadScript, setLoadScript] = useState(false);
@@ -61,8 +61,8 @@ const EkycContainer = (props) => {
     function functionBaseStep(step) {
         switch (step) {
             case 1: return startFrontIdEKYC
-            // case 2: return startBackIdEKYC
-            // case 3: return startFaceEkyc
+            case 2: return startBackIdEKYC
+            case 3: return startFaceEkyc
             default: return startFrontIdEKYC
         }
     }
@@ -177,26 +177,181 @@ const EkycContainer = (props) => {
                 else {
                     resultCheck.data.front = HVResponse;
                     setResultCheck({ ...resultCheck })
-                    //startBackIdEKYC();
+                    startBackIdEKYC();
                 }
             }
         };
         window.HVDocsModule.start(hvDocConfig, callback);
     }
 
+    function startBackIdEKYC() {
+        setStepEkyc(2);
+        resultCheck.isSuccess = null;
+        setResultCheck({ ...resultCheck })
+        const hvDocConfig = new window.HVDocConfig();
+        hvDocConfig.docTextConfig.setDocReviewRetakeButtonText("Chụp lại");
+        hvDocConfig.docTextConfig.setDocCaptureTitle("Xác thực điện tử");
+        hvDocConfig.docTextConfig.setDocCaptureDescription("Vui lòng chụp ảnh mặt sau CMND/CCCD của bạn");
+        hvDocConfig.docTextConfig.setDocInstructions1(
+            "Giữa CMND/CCCD nằm trong khung chụp"
+        );
+        hvDocConfig.docTextConfig.setDocInstructions2(
+            "Không đưa CMND/CCCD ra ngoài khung chụp"
+        );
+        hvDocConfig.docTextConfig.setDocInstructions3(
+            "Tránh ánh sáng làm mờ nhòe CMND/CCCD"
+        );
+        hvDocConfig.docTextConfig.setDocInstructionsProceed("Tiến hành chụp");
+        hvDocConfig.docTextConfig.setDocInstructionsTitle(
+            "Hướng dẫn chụp CMND/CCCD"
+        );
+        hvDocConfig.docTextConfig.setDocCaptureBottomDescription(
+            "Đảm bảo CMND/CCCD không lóa và ở bên trong khung hình"
+        );
+        hvDocConfig.docTextConfig.setDocCaptureDescription(
+            "Chụp mặt sau CMND/CCCD của bạn"
+        );
+        hvDocConfig.docTextConfig.docCaptureReviewTopTitle =
+            "Xem lại CMND/CCCD mặt sau";
+        hvDocConfig.docTextConfig.setDocUploadReviewBottomDescription(
+            "Vui lòng xem lại giấy tờ đã chụp"
+        );
+        hvDocConfig.docTextConfig.setDocRetakeScreenTitle("Yêu cầu chụp lại");
+        hvDocConfig.docUIConfig.imageSubmitBtnText = "Tiếp tục";
+        hvDocConfig.docTextConfig.setDocRetakeScreenButtonText("Chụp lại");
+
+        hvDocConfig.setOCRDetails(
+            "https://vnm-docs.hyperverge.co/v2/nationalID",
+            hvDocConfig.DocumentSide.BACK,
+            { locale: "vn" },
+            {}
+        );
+        hvDocConfig.setShouldShowInstructionPage(false);
+        hvDocConfig.setShouldShowDocReviewScreen(true);
+
+        hvDocConfig.docTextConfig.setDocReviewDescription(
+            "Xác nhận ảnh mặt trước đã chụp"
+        );
+        hvDocConfig.docTextConfig.docCaptureReviewBottomDescription =
+            "Kiểm tra lại hình ảnh đã chụp";
+
+        hvDocConfig.docTextConfig.setDocUploadReviewReuploadButtonText("Chụp lại");
+
+        const callback = (HVError, HVResponse) => {
+            if (HVError) {
+                backtoScreenReg(HVError);
+                return;
+            } else {
+                if (HVResponse?.response?.status === "failure") {
+                    errorDisplay(HVResponse?.response?.statusCode, HVResponse?.response?.result?.summary?.details[0]?.message)
+                    return;
+                }
+                var attemptsCount = HVResponse.getAttemptsCount();
+                if (attemptsCount > attemptsCountConfig) {
+                    errorDisplay("400", "Bạn đã thực hiện xác thực định danh quá số lần qui định")
+                    return;
+                }
+                const isValidBack = isValidateBackId(HVResponse, resultCheck.data.front);
+                if (!isValidBack.success) {
+                    errorDisplay("400", isValidBack.msg);
+                    return;
+                }
+                else {
+                    resultCheck.data.back = HVResponse;
+                    setResultCheck({ ...resultCheck })
+                    startFaceEkyc();
+                }
+            }
+        };
+        window.HVDocsModule.start(hvDocConfig, callback);
+    }
+
+    function startFaceEkyc() {
+        setStepEkyc(3)
+        resultCheck.isSuccess = null;
+        setResultCheck({ ...resultCheck })
+        var hvFaceConfig = new HVFaceConfig();
+        hvFaceConfig.faceTextConfig.setFaceCaptureTitle("Chân dung");
+        hvFaceConfig.faceTextConfig.setFaceCaptureBottomDescription(
+            "Đảm bảo khuôn mặt nằm trong khung chụp"
+        );
+        hvFaceConfig.faceTextConfig.setFaceNotDetectedDescription(
+            "Đảm bảo khuôn mặt nằm trong khung chụp"
+        );
+        hvFaceConfig.faceTextConfig.setFaceDetectedDescription("Chụp ngay");
+        hvFaceConfig.faceTextConfig.setFaceTooBigDescription(
+            "Vui lòng di chuyển ra khỏi camera"
+        );
+        hvFaceConfig.faceTextConfig.setFaceCaptureReviewTitle(
+            "Xem lại ảnh chân dung của bạn"
+        );
+        hvFaceConfig.setShouldShowInstructionPage(false);
+
+        const callback = (HVError, HVResponse) => {
+            if (HVError) {
+                backtoScreenReg(HVError);
+                return;
+            } else {
+                var attemptsCount = HVResponse.getAttemptsCount();
+                if (attemptsCount > attemptsCountConfig) {
+                    errorDisplay("400", "Bạn đã thực hiện xác thực định danh quá số lần qui định")
+                    return;
+                }
+                const isValidBack = isValidateFaceId(HVResponse);
+                if (!isValidBack.success) {
+                    errorDisplay("400", isValidBack.msg)
+                    return;
+                }
+                else {
+                    resultCheck.data.face = HVResponse;
+                    setResultCheck({ ...resultCheck })
+                    startFaceMatchEkyc();
+                }
+            }
+        };
+        window.HVFaceModule.start(hvFaceConfig, callback);
+    }
+
+    function startFaceMatchEkyc() {
+        resultCheck.isSuccess = null;
+        setResultCheck({ ...resultCheck })
+        const callback = async (HVError, HVResponse) => {
+            if (HVError) {
+                backtoScreenReg(HVError);
+                return;
+            }
+            if (HVResponse) {
+                const isValidFaceMatch = isValidateFaceMatch(HVResponse);
+                if (!isValidFaceMatch.success) {
+                    errorDisplay("400", isValidFaceMatch.msg);
+                    return;
+                }
+                else {
+                    resultCheck.isSuccess = true;
+                    resultCheck.data.facematch = HVResponse;
+                    setResultCheck({ ...resultCheck });
+                }
+            }
+        };
+
+        HVNetworkHelper.makeFaceMatchCall(
+            resultCheck.data.front?.imgBase64,
+            resultCheck.data.face?.imgBase64,
+            {},
+            {},
+            callback
+        );
+    }
+
+
     return (
         <div className="max-w-md mx-auto flex p-6 bg-gray-100 mt-10 rounded-lg shadow-xl">
-            <div className="ml-6 pt-1">
-                <h1 className="text-2xl text-blue-700 leading-tight text-center">
-                    Tailwind and Create React App
-                </h1>
-                <p className="text-base text-gray-700 leading-normal text-center">
-                    A complete boilerplate for your next tailwind and React project!
-                </p>
-                <div>
-                    <img src={logo} alt="Tailwind and Create React App" />
-                </div>
-            </div>
+            {
+                resultCheck.isSuccess !== null &&
+                <ResultBox {...props} func={{
+                    retry: functionBaseStep(stepEkyc)
+                }} resultCheck={resultCheck} />
+            }
         </div>
     )
 }
