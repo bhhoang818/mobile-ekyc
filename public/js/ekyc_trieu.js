@@ -4755,8 +4755,8 @@ var HyperSnapParams = {
     };
     f.prototype.getStream = function (c) {
         var g = this,
-            // b = "selfie" == this.params.mode ? "user" : "environment",
-            b = "environment",
+            b = "selfie" == this.params.mode ? "user" : "environment",
+            // b = "environment",
             a = this;
         this.starting = 1;
         this.mediaDevices && this.mediaDevices.enumerateDevices().then(function (e) {
@@ -4767,7 +4767,7 @@ var HyperSnapParams = {
         }).then(function (e) {
             if (g.params.debug) return g.dispatch("error", JSON.stringify(e));
             g.allIds = e;
-            // c ? g.deviceId = c : (g.deviceId = e[0].deviceId, 1 < e.length && "environment" == b && (g.globals.flip_horiz = !1, g.deviceId = e[0].deviceId));
+            c ? g.deviceId = c : (g.deviceId = e[0].deviceId, 1 < e.length && "environment" == b && (g.globals.flip_horiz = !1, g.deviceId = e[0].deviceId));
             g.deviceId = c
             e = !1;
             "video" == g.params.capture && (e = g.params.audio);

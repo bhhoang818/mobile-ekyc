@@ -102,8 +102,8 @@
 }
 /* to customize capture screen */
 #hv-doc-capture-screen {
-  padding: 24px;
-  height: 578px;
+  /* padding: 24px;
+  height: 578px; */
 }
 #hv-doc-capture-screen .hv-close-button {
   float: right;
@@ -148,9 +148,9 @@
 }
 /* face capture page styles */
 #hv-face-capture-screen {
-  padding: 24px;
+  /* padding: 24px;
   width: 500px;
-  height: 578px;
+  height: 578px; */
 }
 #hv-face-capture-screen .hv-close-button {
   float: right;
@@ -172,7 +172,7 @@
   height: 6vh !important;
 }
 .hv-modal-content {
-  max-height: 600px !important;
+  /* max-height: 600px !important; */
 }
 .hv-use-this-photo-btn {
   background-color: #ffc20e !important;
@@ -192,4 +192,13 @@
     -moz-transform: rotateY(180deg);
     /* Firefox */
   }
+}
+
+.hv-preview-video {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  /* Safari and Chrome */
+  -moz-transform: rotateY(180deg);
+  /* Firefox */
+  transform: scaleX(1) !important;
 }
