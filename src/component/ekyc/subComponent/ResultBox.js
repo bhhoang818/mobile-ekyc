@@ -33,10 +33,14 @@ const ResultBox = (props) => {
         modelData.id_yc_w360 = getId_yc ?? null;
         const blobs = dataUrlToFile(modelData.listImage[0]?.src, `test_${new Date().toLocaleDateString()}.png`);
         const formData = new FormData(); //formdata object
-        formData.append('Code', 'hd018629'); //append the values with key, value pair
+        formData.append('Code', resultCheck?.dataToken?.code); //append the values with key, value pair
         formData.append('Image', blobs);
         formData.append('DataExtra', JSON.stringify(modelData));
-        return reg_face(formData);
+        reg_face(formData).then((res) => {
+            setLoading(false);
+        }).catch(() => {
+            setLoading(false);
+        });
     };
 
 
@@ -76,12 +80,7 @@ const ResultBox = (props) => {
                 }
             ]
             setModelData({ ...modelData });
-
-            insertMetaDataWhenNotMatch(null).then((res) => {
-                setLoading(false);
-            }).catch(() => {
-                setLoading(false);
-            });
+            insertMetaDataWhenNotMatch(null);
         }
     }, [resultCheck])
 
@@ -111,12 +110,11 @@ const ResultBox = (props) => {
             :
             <div class="grid h-screen place-items-center">
                 {
-
                     <div class="max-w-sm rounded overflow-hidden shadow-lg">
                         <div class="px-6 py-4">
                             <div class="font-bold text-xl mb-2">Có lỗi xảy ra</div>
                             <p class="text-gray-700 text-base">
-                                {resultCheck?.errorMsg}
+                                {resultCheck?.errorMsg ?? "Lỗi hệ thống"}
                             </p>
                         </div>
                         <div class="px-6 pt-4 pb-2 items-center">
@@ -130,7 +128,6 @@ const ResultBox = (props) => {
                         </div>
                     </div>
                 }
-
             </div >
     )
 }

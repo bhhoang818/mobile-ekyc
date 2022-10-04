@@ -28,26 +28,33 @@ const EkycContainer = (props) => {
         if (tokenParam) {
             setLoading(true);
             getTokenMobile(tokenParam).then((res) => {
-                resultCheck.dataToken = res?.data?.data ?? null;
-                setResultCheck({ ...resultCheck });
-                const script = document.createElement('script');
-                script.src = "/js/ekyc_trieu.js";
-                script.async = true;
-                document.body.appendChild(script);
-                setTimeout(() => {
-                    setLoadScript(true);
+                if (res?.data?.succeeded) {
+                    resultCheck.dataToken = res?.data?.data ?? null;
+                    setResultCheck({ ...resultCheck });
+                    const script = document.createElement('script');
+                    script.src = "/js/ekyc_trieu.js";
+                    script.async = true;
 
-                }, 0);
-                setLoading(false)
+                    document.body.appendChild(script);
+                    setTimeout(() => {
+                        setLoadScript(true);
+                    }, 0);
 
-                return () => {
-                    document.body.removeChild(script);
-                    window?.stream?.getTracks()?.forEach((track) => track?.stop());
-                    window.HyperSnapSDK.endUserSession();
+                    return () => {
+                        document.body.removeChild(script);
+                        window?.stream?.getTracks()?.forEach((track) => track?.stop());
+                        window.HyperSnapSDK.endUserSession();
+                    }
                 }
-            }).catch(() => {
+                else {
+                    errorDisplay(null, res?.data?.message);
+                }
+            }).finally(() => {
                 setLoading(false)
             })
+        }
+        else {
+            errorDisplay(null, "Không xác thực được token");
         }
     }, [])
 
@@ -74,6 +81,7 @@ const EkycContainer = (props) => {
 
     function functionBaseStep(step) {
         switch (step) {
+            case 0: return () => window.location.reload();
             case 1: return startFrontIdEKYC
             case 2: return startBackIdEKYC
             case 3: return startFaceEkyc
