@@ -24,22 +24,20 @@ const EkycContainer = (props) => {
     })
 
     useEffect(() => {
+        setLoading(true);
         const tokenParam = new URLSearchParams(window.location.search)?.get('token');
         if (tokenParam) {
-            setLoading(true);
             getTokenMobile(tokenParam).then((res) => {
                 if (res?.data?.succeeded) {
                     resultCheck.dataToken = res?.data?.data ?? null;
                     setResultCheck({ ...resultCheck });
                     const script = document.createElement('script');
-                    script.src = "/js/ekyc_trieu.js";
+                    script.src = `${process.env.PUBLIC_URL}/js/ekyc_trieu.js`;
                     script.async = true;
-
                     document.body.appendChild(script);
                     setTimeout(() => {
                         setLoadScript(true);
                     }, 0);
-
                     return () => {
                         document.body.removeChild(script);
                         window?.stream?.getTracks()?.forEach((track) => track?.stop());
@@ -48,13 +46,16 @@ const EkycContainer = (props) => {
                 }
                 else {
                     errorDisplay(null, res?.data?.message);
+                    setLoading(false)
                 }
-            }).finally(() => {
+            }).catch((err) => {
+                errorDisplay(null, err?.message);
                 setLoading(false)
             })
         }
         else {
             errorDisplay(null, "Không xác thực được token");
+            setLoading(false)
         }
     }, [])
 
@@ -69,6 +70,7 @@ const EkycContainer = (props) => {
 
 
     function initHV(token) {
+
         window.HyperSnapSDK.init(
             token,
             HyperSnapParams?.Region?.AsiaPacific
@@ -76,6 +78,7 @@ const EkycContainer = (props) => {
         window.HyperSnapSDK.startUserSession();
         setTimeout(() => {
             startFrontIdEKYC();
+            setLoading(false);
         }, 100);
     }
 
