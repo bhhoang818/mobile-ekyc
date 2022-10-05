@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { reg_face } from "../../../service/RekonitoApiService"
 import { Loading } from '../../../shared/packages/control/loading/loading';
+import toastAdapter from '../../../shared/packages/service-adapter/toastAdapter';
 
 export function dataUrlToFile(dataUrl, filename) {
     const arr = dataUrl.split(',');
@@ -38,8 +39,10 @@ const ResultBox = (props) => {
         formData.append('DataExtra', JSON.stringify(modelData));
         reg_face(formData).then((res) => {
             setLoading(false);
-        }).catch(() => {
+            toastAdapter.toast('success', 'Xác thực eKYC hoàn tất', "")
+        }).catch((err) => {
             setLoading(false);
+            toastAdapter.toast('error', 'Xác thực eKYC thất bại', err?.message)
         });
     };
 
@@ -101,7 +104,7 @@ const ResultBox = (props) => {
                                     <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Đăng ký eKYC thành công</h5>
                                 </a>
                                 <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">
-                                    Vui lòng tải lại trang đăng nhập từ web360
+                                    Vui lòng kiểm tra lại thông tin eKYC từ Web360
                                 </p>
                             </div>
                         </div>

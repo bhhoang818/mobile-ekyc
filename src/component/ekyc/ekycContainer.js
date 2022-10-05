@@ -5,6 +5,7 @@ import { isValidateFrontId, isValidateBackId, isValidateFaceId, isValidateFaceMa
 import md5 from "md5";
 import ResultBox from "./subComponent/ResultBox";
 import { Loading } from "../../shared/packages/control/loading/loading";
+import toastAdapter from "../../shared/packages/service-adapter/toastAdapter";
 
 const EkycContainer = (props) => {
     const [loadScript, setLoadScript] = useState(false);
@@ -112,6 +113,7 @@ const EkycContainer = (props) => {
         if (HVError?.errorCode === '013') {
         }
         else {
+            toastAdapter.toast("error", "Kiểm tra thất bại", HVError?.errorMsg)
             errorDisplay(HVError?.errorCode, HVError?.errorMsg)
         }
     }
@@ -201,6 +203,7 @@ const EkycContainer = (props) => {
                     return;
                 }
                 else {
+                    toastAdapter.toast("success", "Kiểm tra mặt trước CMND/CCCD thành công", "")
                     resultCheck.data.front = HVResponse;
                     setResultCheck({ ...resultCheck })
                     startBackIdEKYC();
@@ -283,6 +286,7 @@ const EkycContainer = (props) => {
                     return;
                 }
                 else {
+                    toastAdapter.toast("success", "Kiểm tra mặt sau CMND/CCCD thành công", "")
                     resultCheck.data.back = HVResponse;
                     setResultCheck({ ...resultCheck })
                     startFaceEkyc();
@@ -329,6 +333,7 @@ const EkycContainer = (props) => {
                     return;
                 }
                 else {
+                    toastAdapter.toast("success", "Kiểm tra khuôn mặt thành công", "")
                     resultCheck.data.face = HVResponse;
                     setResultCheck({ ...resultCheck })
                     startFaceMatchEkyc();
@@ -353,6 +358,7 @@ const EkycContainer = (props) => {
                     return;
                 }
                 else {
+                    toastAdapter.toast("success", "Kiểm tra khớp khuôn mặt với GTTT thành công", "")
                     resultCheck.isSuccess = true;
                     resultCheck.data.facematch = HVResponse;
                     setResultCheck({ ...resultCheck });
