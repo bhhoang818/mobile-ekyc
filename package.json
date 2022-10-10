@@ -6,6 +6,7 @@
     "@fullhuman/postcss-purgecss": "^2.2.0",
     "autoprefixer": "^9.7.6",
     "axios": "^0.27.2",
+    "crypto-js": "^4.1.1",
     "env-cmd": "^10.1.0",
     "eslint-plugin-react": "^7.31.8",
     "md5": "^2.3.0",
@@ -24,7 +25,7 @@
   "scripts": {
     "build:tailwind": "postcss src/tailwind.css -o src/tailwind.generated.css",
     "watch:tailwind": "postcss -w src/tailwind.css -o src/tailwind.generated.css",
-    "start": "run-p watch:tailwind start:react",
+    "start": "env-cmd -f .env run-p watch:tailwind start:react",
     "start:react": "react-scripts start",
     "prebuild": "npm run build:tailwind",
     "build": "env-cmd -f .env react-scripts build",

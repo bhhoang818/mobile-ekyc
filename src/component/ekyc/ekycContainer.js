@@ -15,6 +15,7 @@ const EkycContainer = (props) => {
     const [resultCheck, setResultCheck] = useState({
         isSuccess: null,
         dataToken: null,
+        tokenEkycMobile: null,
         errorMsg: null,
         data: {
             front: null,
@@ -30,6 +31,7 @@ const EkycContainer = (props) => {
         if (tokenParam) {
             getTokenMobile(tokenParam).then((res) => {
                 if (res?.data?.succeeded) {
+                    resultCheck.tokenEkycMobile = tokenParam;
                     resultCheck.dataToken = res?.data?.data ?? null;
                     setResultCheck({ ...resultCheck });
                     const script = document.createElement('script');
