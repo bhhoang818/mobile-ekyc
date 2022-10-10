@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { reg_face } from "../../../service/RekonitoApiService"
 import { Loading } from '../../../shared/packages/control/loading/loading';
 import toastAdapter from '../../../shared/packages/service-adapter/toastAdapter';
+import { encrypt } from '../../../service/encode';
 
 export function dataUrlToFile(dataUrl, filename) {
     const arr = dataUrl.split(',');
@@ -34,12 +35,19 @@ const ResultBox = (props) => {
         modelData.id_yc_w360 = getId_yc ?? null;
         const blobs = dataUrlToFile(modelData.listImage[0]?.src, `test_${new Date().toLocaleDateString()}.png`);
         const formData = new FormData(); //formdata object
+        const authSessionKey = encrypt(resultCheck?.tokenEkycMobile);
         formData.append('Code', resultCheck?.dataToken?.code); //append the values with key, value pair
         formData.append('Image', blobs);
         formData.append('DataExtra', JSON.stringify(modelData));
+        formData.append('SessionId', authSessionKey)
         reg_face(formData).then((res) => {
-            setLoading(false);
-            toastAdapter.toast('success', 'Xác thực eKYC hoàn tất', "")
+            if (res?.data?.succeeded === false) {
+                toastAdapter.toast('error', res?.data?.message, "")
+            }
+            else {
+                setLoading(false);
+                toastAdapter.toast('success', 'Xác thực eKYC hoàn tất', "")
+            }
         }).catch((err) => {
             setLoading(false);
             toastAdapter.toast('error', 'Xác thực eKYC thất bại', err?.message)
